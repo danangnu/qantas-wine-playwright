@@ -18,8 +18,8 @@ A Python Flask API that scrapes wine product data from [Qantas Wine](https://win
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/qantas-wine-scraper.git
-cd qantas-wine-scraper
+git clone https://github.com/danangnu/qantas-wine-playwright.git
+cd qantas-wine-playwright
 ```
 
 ### 2. Create Virtual Environment
