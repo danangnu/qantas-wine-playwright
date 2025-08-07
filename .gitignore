@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+
+# VS Code
+.vscode/
+
+# Playwright downloads
+playwright/.cache/
+
+# Pytest cache
+.cache/
+
+# Environment files
+.env
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Logs
+*.log
+
+# Flask debug artifacts
+instance/
+*.db
+
+# System files
+.idea/
+*.swp
