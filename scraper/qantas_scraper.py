@@ -105,7 +105,7 @@ def scrape_products(TARGET_URL):
 
                         if iqty < len(qty_elements):
                             qty_elements[iqty].click(timeout=10000)
-                            r.wait_for_selector("a[class*='sc-'] div[class*='sc-'] div[class*='sc-'] p", timeout=5000)
+                            r.wait_for_selector("a[class*='sc-'] div[class*='sc-'] div[class*='sc-'] p", timeout=50000)
                             qty_elements = r.query_selector_all("a[class*='sc-'] div[class*='sc-'] div[class*='sc-'] p")
 
                 next_button = page.locator("a[data-testid='page-next']")
