@@ -3,14 +3,14 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 import time
 import re
 
-TARGET_URL = "https://wine.qantas.com/c/browse-products?OnSale=1&sort=brand-asc"
+# TARGET_URL = "https://wine.qantas.com/c/browse-products?OnSale=1&sort=brand-asc"
 
 # Optional proxy settings
 PROXY_SERVER = "http://your-au-proxy:port"  # Replace or disable if not using
 PROXY_USERNAME = "your_proxy_username"
 PROXY_PASSWORD = "your_proxy_password"
 
-def scrape_products():
+def scrape_products(TARGET_URL):
     j_results = []
 
     with sync_playwright() as p:
@@ -61,8 +61,8 @@ def scrape_products():
                         bonus_points = ""
                         bonus_el = r.query_selector("a span[class*='sc-']")
                         if bonus_el:
-                            txt = bonus_el.inner_text().lower()
-                            if "bonus points" in txt:
+                            txt = bonus_el.inner_text()
+                            if "bonus points" in txt.lower():
                                 number = re.sub(r"[^\d]", "", txt)
                                 if number.isnumeric():
                                     bonus_points = txt
@@ -85,22 +85,28 @@ def scrape_products():
                         price_els = r.query_selector_all("a[class*='sc-'] div[class*='sc-'] div[class*='sc-'] div[class*='sc-'] div[class*='sc-'] div[class*='sc-'] span[class*='sc-']")
 
                         for pe in price_els:
-                            price_temp = pe.inner_text().strip().lower()
-                            if price_temp.startswith("$") and not price_temp.endswith(" per bottle"):
+                            price_temp = pe.inner_text().strip()
+                            if price_temp.lower().startswith("$") and not price_temp.lower().endswith(" per bottle"):
                                 price = price_temp
-                            if price_temp.endswith("pts"):
+                            if price_temp.lower().endswith("pts"):
                                 pts = price_temp
 
                         j_results.append({
                             "product_name": product_name.strip() if product_name else None,
                             "qty": qty if qty else None,
                             "price": price.strip() if price else None,
-                            "points": pts if pts else None,
+                            "points": pts.strip() if pts else None,
+                            "bonus_points": bonus_points.strip() if bonus_points else None,
                             "url": f"https://wine.qantas.com{link}" if link else None,
                             "details": details.strip() if details else None
                         })
 
                         iqty += 1
+
+                        if iqty < len(qty_elements):
+                            qty_elements[iqty].click(timeout=10000)
+                            r.wait_for_selector("a[class*='sc-'] div[class*='sc-'] div[class*='sc-'] p", timeout=5000)
+                            qty_elements = r.query_selector_all("a[class*='sc-'] div[class*='sc-'] div[class*='sc-'] p")
 
                 next_button = page.locator("a[data-testid='page-next']")
                 if not next_button.is_visible():
